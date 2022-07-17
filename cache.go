@@ -1,23 +1,39 @@
 package cache
 
-import "time"
+import (
+	"time"
+)
 
 type Cache struct {
+	db      map[string]string
+	expires int64
 }
 
 func NewCache() Cache {
 	return Cache{}
 }
 
-func (receiver) Get(key string) (string, bool) {
+func (c *Cache) Get(key string) (string, bool) {
+	if c.expires == 0 {
+		return "", false
+	}
 
+	return c.db[key], true
 }
 
-func (receiver) Put(key, value string) {
+func (c *Cache) Put(key, value string) {
+	c.db[key] = value
 }
 
-func (receiver) Keys() []string {
+func (c *Cache) Keys() []string {
+	var keysMap []string
+	if c.expires != 0 {
+		for k, _ := range c.db {
+			keysMap = append(keysMap, k)
+		}
+	}
+	return keysMap
 }
 
-func (receiver) PutTill(key, value string, deadline time.Time) {
+func (c *Cache) PutTill(key, value string, deadline time.Time) {
 }
